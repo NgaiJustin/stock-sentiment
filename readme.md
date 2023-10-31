@@ -51,3 +51,4 @@ One interesting point is that sentiment analysis is parametrized on a sentiment 
 We will refer to these four sources and others in order to gain the necessary background knowledge for our implementation tasks. Our work will be novel in terms of making financial data more accessible to people who are still familiarizing themselves with the basics of financial markets. Many existing financial software applications, like the desktop app for TD Ameritrade or Bloomberg Terminal, process streams of data that are known to be clean and display processed data streams that are useful for day traders. The main differences are:
 our system will focus on easy-to-understand information (in particular, a stream of news headlines rather than a plot of a quantity like open interest in put/call options)
 our system will be capable of processing messy data
+

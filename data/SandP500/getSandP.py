@@ -1,7 +1,6 @@
 from datetime import datetime
 from concurrent import futures
 
-import pandas as pd
 from pandas import DataFrame
 import pandas_datareader.data as web
 

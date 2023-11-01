@@ -1,8 +1,9 @@
 from datetime import datetime
 from concurrent import futures
+from typing import List
 
 from pandas import DataFrame
-import pandas_datareader.data as web
+import pandas_datareader.data as web  # type: ignore
 
 
 def download_stock(stock):
@@ -532,7 +533,7 @@ if __name__ == "__main__":
         "ZTS",
     ]
 
-    bad_names = []  # to keep track of failed queries
+    bad_names: List[str] = []  # to keep track of failed queries
 
     """here we use the concurrent.futures module's ThreadPoolExecutor
 		to speed up the downloads buy doing them in parallel 

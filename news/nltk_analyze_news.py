@@ -16,19 +16,20 @@
 import pandas as pd
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 from tqdm.notebook import tqdm
+from pathlib import Path
 
 # +
-articles = pd.read_parquet('filtered/year-2016-month-1.0.parquet')
+data_root = Path('../data/')
+articles_path = data_root / "news-data" / "all-the-news" / "year-2016-month-1.0.parquet"
+
+articles = pd.read_parquet(articles_path)
 sid = SentimentIntensityAnalyzer()
 
-sentiments = []
-for article in tqdm(list(articles.iloc[:100].itertuples())):
-    sentiments.append(sid.polarity_scores(article.article))
-sentiments
+
 # -
 
-articles.head()
-
-articles['date'].describe()
+def nltk_sentiment(article):
+    d = sid.polarity_scores(article)
+    return d['pos'], d['neg'], d['neu']
 
 

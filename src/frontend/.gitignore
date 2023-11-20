@@ -1,0 +1,16 @@
+# React project .gitignore
+# =========================
+# React Tooling
+.idea
+node_modules
+npm-debug.log
+yarn-error.log
+yarn.lock
+
+# OS generated files
+.DS_Store*
+
+# React files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

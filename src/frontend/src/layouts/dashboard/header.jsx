@@ -1,4 +1,5 @@
 // import PropTypes from 'prop-types';
+import { useState } from 'react';
 
 import Box from '@mui/material/Box';
 import AppBar from '@mui/material/AppBar';
@@ -26,18 +27,32 @@ import Searchbar from './common/searchbar';
 // ----------------------------------------------------------------------
 
 export default function Header() {
+  const [query, setQuery] = useState('');
+
   const theme = useTheme();
 
   const lgUp = useResponsive('up', 'lg');
 
   const renderContent = (
     <>
-      <Searchbar />
+      <Searchbar
+        value={query}
+        onChange={(event) => {
+          setQuery(event.target.value);
+        }}
+        onSearch={() => {
+          console.log(`Searched: ${query}`);
+        }}
+      />
 
       <Box sx={{ flexGrow: 1 }} />
 
       <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <DatePicker />
+        <DatePicker
+          onAccept={(date) => {
+            console.log(date);
+          }}
+        />
       </LocalizationProvider>
     </>
   );

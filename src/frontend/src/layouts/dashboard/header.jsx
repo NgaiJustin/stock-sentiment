@@ -1,48 +1,52 @@
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
 
 import Box from '@mui/material/Box';
-import Stack from '@mui/material/Stack';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import { useTheme } from '@mui/material/styles';
-import IconButton from '@mui/material/IconButton';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+// import Stack from '@mui/material/Stack';
+// import IconButton from '@mui/material/IconButton';
 
 import { useResponsive } from 'src/hooks/use-responsive';
 
 import { bgBlur } from 'src/theme/css';
 
-import Iconify from 'src/components/iconify';
+// import Iconify from 'src/components/iconify';
 
 import Searchbar from './common/searchbar';
 import { NAV, HEADER } from './config-layout';
-import AccountPopover from './common/account-popover';
-import LanguagePopover from './common/language-popover';
-import NotificationsPopover from './common/notifications-popover';
+// import AccountPopover from './common/account-popover';
+// import DatePopover from './common/date-popover';
+// import LanguagePopover from './common/language-popover';
+// import NotificationsPopover from './common/notifications-popover';
 
 // ----------------------------------------------------------------------
 
-export default function Header({ onOpenNav }) {
+export default function Header() {
   const theme = useTheme();
 
   const lgUp = useResponsive('up', 'lg');
 
   const renderContent = (
     <>
-      {!lgUp && (
-        <IconButton onClick={onOpenNav} sx={{ mr: 1 }}>
-          <Iconify icon="eva:menu-2-fill" />
-        </IconButton>
-      )}
-
       <Searchbar />
 
       <Box sx={{ flexGrow: 1 }} />
 
-      <Stack direction="row" alignItems="center" spacing={1}>
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <DatePicker />
+      </LocalizationProvider>
+      {/* <DatePopover /> */}
+      {/* <LanguagePopover /> */}
+
+      {/* <Stack direction="row" alignItems="center" spacing={1}>
         <LanguagePopover />
         <NotificationsPopover />
         <AccountPopover />
-      </Stack>
+      </Stack> */}
     </>
   );
 
@@ -76,6 +80,6 @@ export default function Header({ onOpenNav }) {
   );
 }
 
-Header.propTypes = {
-  onOpenNav: PropTypes.func,
-};
+// Header.propTypes = {
+//   onOpenNav: PropTypes.func,
+// };

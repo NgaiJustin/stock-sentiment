@@ -8,8 +8,6 @@ import { useTheme } from '@mui/material/styles';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-// import Stack from '@mui/material/Stack';
-// import IconButton from '@mui/material/IconButton';
 
 import { useResponsive } from 'src/hooks/use-responsive';
 
@@ -19,10 +17,6 @@ import { bgBlur } from 'src/theme/css';
 
 import { HEADER } from './config-layout';
 import Searchbar from './common/searchbar';
-// import AccountPopover from './common/account-popover';
-// import DatePopover from './common/date-popover';
-// import LanguagePopover from './common/language-popover';
-// import NotificationsPopover from './common/notifications-popover';
 
 // ----------------------------------------------------------------------
 

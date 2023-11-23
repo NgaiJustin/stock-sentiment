@@ -16,8 +16,8 @@ import { bgBlur } from 'src/theme/css';
 
 // import Iconify from 'src/components/iconify';
 
+import { HEADER } from './config-layout';
 import Searchbar from './common/searchbar';
-import { NAV, HEADER } from './config-layout';
 // import AccountPopover from './common/account-popover';
 // import DatePopover from './common/date-popover';
 // import LanguagePopover from './common/language-popover';
@@ -39,14 +39,6 @@ export default function Header() {
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <DatePicker />
       </LocalizationProvider>
-      {/* <DatePopover /> */}
-      {/* <LanguagePopover /> */}
-
-      {/* <Stack direction="row" alignItems="center" spacing={1}>
-        <LanguagePopover />
-        <NotificationsPopover />
-        <AccountPopover />
-      </Stack> */}
     </>
   );
 
@@ -63,7 +55,7 @@ export default function Header() {
           duration: theme.transitions.duration.shorter,
         }),
         ...(lgUp && {
-          width: `calc(100% - ${NAV.WIDTH + 1}px)`,
+          width: `calc(100%)`,
           height: HEADER.H_DESKTOP,
         }),
       }}

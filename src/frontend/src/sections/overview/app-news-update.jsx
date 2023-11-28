@@ -65,7 +65,7 @@ function NewsItem({ news }) {
       />
 
       <Box sx={{ minWidth: 240, flexGrow: 1 }}>
-        <Link color="inherit" variant="subtitle2" underline="hover" noWrap>
+        <Link color="inherit" variant="subtitle2" underline="hover">
           {title}
         </Link>
 

@@ -10,25 +10,25 @@ import { fShortenNumber } from 'src/utils/format-number';
 
 // import AppTasks from '../app-tasks';
 import AppNewsUpdate from '../app-news-update';
-import AppOrderTimeline from '../app-order-timeline';
+// import AppOrderTimeline from '../app-order-timeline';
 import AppCurrentVisits from '../app-current-visits';
 import AppWebsiteVisits from '../app-website-visits';
 import AppWidgetSummary from '../app-widget-summary';
 // import AppTrafficBySite from '../app-traffic-by-site';
-import AppCurrentSubject from '../app-current-subject';
+// import AppCurrentSubject from '../app-current-subject';
 import AppConversionRates from '../app-conversion-rates';
 
 // ----------------------------------------------------------------------
 
 export default function AppView({ data }) {
-  // console.log(data.Close - data.Open);
+  // Price information
   const firstOpen = data.length > 0 ? data[0].Open : 0;
   const lastClose = data.length > 0 ? data[data.length - 1].Close : 0;
-  console.log(data);
   const change = lastClose - firstOpen;
   const percentChange = (change / firstOpen) * 100;
   const formattedPercentChange = `${percentChange > 0 ? '+' : ''}${percentChange.toFixed(2)}%`;
 
+  // Volume information
   // group by hour if granularity is day
   const entriesGroup =
     data.granularity === 'Day'
@@ -64,6 +64,18 @@ export default function AppView({ data }) {
     }));
 
   const totalTradeVolume = volumeSeries.reduce((acc, curr) => acc + curr.value, 0);
+
+  // News information
+  const newsSeries =
+    data.length > 0
+      ? [...Array(5)].map((_, index) => ({
+          id: faker.string.uuid(),
+          title: data[data.length - 1 - index][`title_${index + 1}`],
+          description: data[data.length - 1 - index][`text_${index + 1}`],
+          image: `/assets/images/covers/cover_${index + 1}.jpg`,
+          postedAt: faker.date.recent(),
+        }))
+      : [];
 
   return (
     <Container maxWidth="xl">
@@ -189,7 +201,7 @@ export default function AppView({ data }) {
           />
         </Grid>
 
-        <Grid xs={12} md={6} lg={4}>
+        {/* <Grid xs={12} md={6} lg={4}>
           <AppCurrentSubject
             title="Current Subject"
             chart={{
@@ -201,22 +213,13 @@ export default function AppView({ data }) {
               ],
             }}
           />
-        </Grid>
-
-        <Grid xs={12} md={6} lg={8}>
-          <AppNewsUpdate
-            title="News Update"
-            list={[...Array(5)].map((_, index) => ({
-              id: faker.string.uuid(),
-              title: faker.person.jobTitle(),
-              description: faker.commerce.productDescription(),
-              image: `/assets/images/covers/cover_${index + 1}.jpg`,
-              postedAt: faker.date.recent(),
-            }))}
-          />
-        </Grid>
+        </Grid> */}
 
         <Grid xs={12} md={6} lg={4}>
+          <AppNewsUpdate title="News Update" list={newsSeries} />
+        </Grid>
+
+        {/* <Grid xs={12} md={6} lg={4}>
           <AppOrderTimeline
             title="Order Timeline"
             list={[...Array(5)].map((_, index) => ({
@@ -232,7 +235,7 @@ export default function AppView({ data }) {
               time: faker.date.past(),
             }))}
           />
-        </Grid>
+        </Grid> */}
       </Grid>
     </Container>
   );

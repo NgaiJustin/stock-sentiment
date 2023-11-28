@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 
@@ -44,9 +45,11 @@ export default function Header({ onSearch, onChangeDate, onChangeGranularity}) {
       />
 
       <Box sx={{ flexGrow: 1 }} />
-
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
+      
+      {/* Defaults to March 2016 */}
+      <LocalizationProvider dateAdapter={AdapterDayjs} >
         <DatePicker
+          defaultValue={dayjs('2016-03-01')}
           onAccept={(date) => {
             // console.log(date);
             onChangeDate(date);

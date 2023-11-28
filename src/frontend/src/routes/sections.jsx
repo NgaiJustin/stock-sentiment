@@ -75,7 +75,19 @@ export default function Router() {
           newDataPerDay[itemDate].Volume += item.Volume;
           newDataPerDay[itemDate].Low = Math.min(newDataPerDay[itemDate].Low, item.Low);
           newDataPerDay[itemDate].High = Math.max(newDataPerDay[itemDate].High, item.High);
-          newDataPerDay[itemDate].Close = item.Close; // override all closes (only the last close will be kept which is what we want)
+          
+          // override all closes and news (only the last value will be kept which is what we want)
+          newDataPerDay[itemDate].Close = item.Close; 
+          newDataPerDay[itemDate].title_1 = item.title_1;
+          newDataPerDay[itemDate].title_2 = item.title_2;
+          newDataPerDay[itemDate].title_3 = item.title_3;
+          newDataPerDay[itemDate].title_4 = item.title_4;
+          newDataPerDay[itemDate].title_5 = item.title_5;
+          newDataPerDay[itemDate].text_1 = item.text_1;
+          newDataPerDay[itemDate].text_2 = item.text_2;
+          newDataPerDay[itemDate].text_3 = item.text_3;
+          newDataPerDay[itemDate].text_4 = item.text_4;
+          newDataPerDay[itemDate].text_5 = item.text_5;
 
           // add sent_label to array
           newDataPerDay[itemDate].sent_labels.push(item.sent_label);
@@ -103,6 +115,16 @@ export default function Router() {
             High: item.High,
             Open: item.Open,
             Close: item.Close,
+            title_1: item.title_1,
+            title_2: item.title_2,
+            title_3: item.title_3,
+            title_4: item.title_4,
+            title_5: item.title_5,
+            text_1: item.text_1,
+            text_2: item.text_2,
+            text_3: item.text_3,
+            text_4: item.text_4,
+            text_5: item.text_5,
             sent_labels: [],
           };
         }

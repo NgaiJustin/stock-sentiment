@@ -56,7 +56,7 @@ export default function Router() {
         itemDateTime.getDate() === currDateTime.getDate()
       );
     });
-    
+
     // add tag for granularity
     newData.granularity = currGranularity;
 
@@ -75,6 +75,7 @@ export default function Router() {
           newDataPerDay[itemDate].Volume += item.Volume;
           newDataPerDay[itemDate].Low = Math.min(newDataPerDay[itemDate].Low, item.Low);
           newDataPerDay[itemDate].High = Math.max(newDataPerDay[itemDate].High, item.High);
+          newDataPerDay[itemDate].Close = item.Close; // override all closes (only the last close will be kept which is what we want)
 
           // add sent_label to array
           newDataPerDay[itemDate].sent_labels.push(item.sent_label);
@@ -100,6 +101,8 @@ export default function Router() {
             Volume: item.Volume,
             Low: item.Low,
             High: item.High,
+            Open: item.Open,
+            Close: item.Close,
             sent_labels: [],
           };
         }

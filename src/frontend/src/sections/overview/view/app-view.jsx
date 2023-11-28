@@ -6,6 +6,7 @@ import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
 
 // import Iconify from 'src/components/iconify';
+import { fShortenNumber } from 'src/utils/format-number';
 
 // import AppTasks from '../app-tasks';
 import AppNewsUpdate from '../app-news-update';
@@ -23,9 +24,10 @@ export default function AppView({ data }) {
   // console.log(data.Close - data.Open);
   const firstOpen = data.length > 0 ? data[0].Open : 0;
   const lastClose = data.length > 0 ? data[data.length - 1].Close : 0;
+  console.log(data);
   const change = lastClose - firstOpen;
   const percentChange = (change / firstOpen) * 100;
-  const formattedPercentChange = `${percentChange > 0 ? '+' : '-'}${percentChange.toFixed(2)}%`;
+  const formattedPercentChange = `${percentChange > 0 ? '+' : ''}${percentChange.toFixed(2)}%`;
 
   // group by hour if granularity is day
   const entriesGroup =
@@ -55,13 +57,13 @@ export default function AppView({ data }) {
       value: item.Volume || 0,
     }))
     .filter((item) => item.label !== 'N/A')
-    .filter((item) => item.value !== 0).map((item) => ({
-      label: item.label + (data.granularity === 'Day' ? ":00" : ""),
+    .filter((item) => item.value !== 0)
+    .map((item) => ({
+      label: item.label + (data.granularity === 'Day' ? ':00' : ''),
       value: item.value,
     }));
-    
 
-  console.log(volumeSeries)
+  const totalTradeVolume = volumeSeries.reduce((acc, curr) => acc + curr.value, 0);
 
   return (
     <Container maxWidth="xl">
@@ -75,6 +77,7 @@ export default function AppView({ data }) {
             title="Total Volume"
             total={data.reduce((acc, curr) => acc + curr.Volume, 0)}
             color="success"
+            format={fShortenNumber}
             icon={<img alt="icon" src="/assets/icons/glass/ic_glass_buy.png" />}
           />
         </Grid>
@@ -91,18 +94,22 @@ export default function AppView({ data }) {
         <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
             title="Low"
-            total={data.reduce((acc, curr) => Math.min(acc, curr.Low), Infinity)}
+            total={
+              data.length > 0 ? data.reduce((acc, curr) => Math.min(acc, curr.Low), Infinity) : 0
+            }
             color="warning"
-            icon={<img alt="icon" src="/assets/icons/glass/ic_glass_message.png" />}
+            icon={<img alt="icon" src="/assets/icons/glass/low.png" />}
           />
         </Grid>
 
         <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
             title="High"
-            total={data.reduce((acc, curr) => Math.max(acc, curr.High), -Infinity)}
+            total={
+              data.length > 0 ? data.reduce((acc, curr) => Math.max(acc, curr.High), -Infinity) : 0
+            }
             color="error"
-            icon={<img alt="icon" src="/assets/icons/glass/ic_glass_message.png" />}
+            icon={<img alt="icon" src="/assets/icons/glass/high.png" />}
           />
         </Grid>
 
@@ -175,7 +182,7 @@ export default function AppView({ data }) {
         <Grid xs={12} md={6} lg={8}>
           <AppConversionRates
             title="Trade Volumes"
-            subheader="(+43%) than last year"
+            subheader={`Total Volume: ${fShortenNumber(totalTradeVolume)}`}
             chart={{
               series: volumeSeries,
             }}

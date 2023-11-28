@@ -1,4 +1,5 @@
 // import { useState } from 'react';
+import { Suspense } from 'react';
 import PropTypes from 'prop-types';
 
 import Box from '@mui/material/Box';
@@ -9,11 +10,15 @@ import Header from './header';
 
 // ----------------------------------------------------------------------
 
-export default function DashboardLayout({ children }) {
+export default function DashboardLayout({onSearch, onChangeDate, onChangeGranularity, children }) {
   // const [openNav, setOpenNav] = useState(false);
   return (
     <>
-      <Header />
+      <Header
+        onSearch={onSearch}
+        onChangeDate={onChangeDate}
+        onChangeGranularity={onChangeGranularity}
+      />
       <Box
         sx={{
           minHeight: 1,
@@ -21,12 +26,17 @@ export default function DashboardLayout({ children }) {
           flexDirection: { xs: 'column', lg: 'row' },
         }}
       >
-        <Main>{children}</Main>
+        <Suspense>
+          <Main>{children}</Main>
+        </Suspense>
       </Box>
     </>
   );
 }
 
 DashboardLayout.propTypes = {
+  onSearch: PropTypes.func,
+  onChangeDate: PropTypes.func,
+  onChangeGranularity: PropTypes.func,
   children: PropTypes.node,
 };

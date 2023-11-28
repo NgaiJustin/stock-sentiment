@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import { faker } from '@faker-js/faker';
 
 import Container from '@mui/material/Container';
@@ -18,7 +19,8 @@ import AppConversionRates from '../app-conversion-rates';
 
 // ----------------------------------------------------------------------
 
-export default function AppView() {
+export default function AppView({data}) {
+  // console.log(data);
   return (
     <Container maxWidth="xl">
       <Typography variant="h4" sx={{ mb: 5 }}>
@@ -29,7 +31,7 @@ export default function AppView() {
         <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
             title="Total Volume"
-            total={714000}
+            total={data.reduce((acc, curr) => acc + curr.Volume, 0)}
             color="success"
             icon={<img alt="icon" src="/assets/icons/glass/ic_glass_buy.png" />}
           />
@@ -38,7 +40,7 @@ export default function AppView() {
         <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
             title="Average Price"
-            total={201}
+            total={data.reduce((acc, curr) => acc + (curr.Low + curr.High) / 2, 0) / data.length}
             color="info"
             icon={<img alt="icon" src="/assets/icons/glass/ic_glass_bag.png" />}
           />
@@ -47,7 +49,7 @@ export default function AppView() {
         <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
             title="Low"
-            total={183}
+            total={data.reduce((acc, curr) => Math.min(acc, curr.Low), Infinity)}
             color="warning"
             icon={<img alt="icon" src="/assets/icons/glass/ic_glass_message.png" />}
           />
@@ -56,7 +58,7 @@ export default function AppView() {
         <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
             title="High"
-            total={234}
+            total={data.reduce((acc, curr) => Math.max(acc, curr.High), -Infinity)}
             color="error"
             icon={<img alt="icon" src="/assets/icons/glass/ic_glass_message.png" />}
           />
@@ -67,37 +69,20 @@ export default function AppView() {
             title="Price Chart"
             subheader="(+43%) than last year"
             chart={{
-              labels: [
-                '01/01/2003',
-                '02/01/2003',
-                '03/01/2003',
-                '04/01/2003',
-                '05/01/2003',
-                '06/01/2003',
-                '07/01/2003',
-                '08/01/2003',
-                '09/01/2003',
-                '10/01/2003',
-                '11/01/2003',
-              ],
+              labels: data.map((item) => item.Date),
               series: [
+                // {
+                //   name: 'Volume',
+                //   type: 'column',
+                //   fill: 'solid',
+                //   data: data.map((item) => item.Volume),
+                // },
                 {
-                  name: 'Team A',
-                  type: 'column',
-                  fill: 'solid',
-                  data: [23, 11, 22, 27, 13, 22, 37, 21, 44, 22, 30],
-                },
-                {
-                  name: 'Team B',
+                  name: 'Price',
                   type: 'area',
                   fill: 'gradient',
-                  data: [44, 55, 41, 67, 22, 43, 21, 41, 56, 27, 43],
-                },
-                {
-                  name: 'Team C',
-                  type: 'line',
-                  fill: 'solid',
-                  data: [30, 25, 36, 30, 45, 35, 64, 52, 59, 36, 39],
+                  // Round to 4 decimal places
+                  data: data.map((item) => Math.round((item.Low + item.High) / 2 * 10000) / 10000),
                 },
               ],
             }}
@@ -187,3 +172,7 @@ export default function AppView() {
     </Container>
   );
 }
+
+AppView.propTypes = {
+  data: PropTypes.object
+};

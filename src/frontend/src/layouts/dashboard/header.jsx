@@ -1,11 +1,13 @@
-// import PropTypes from 'prop-types';
 import { useState } from 'react';
+import PropTypes from 'prop-types';
 
 import Box from '@mui/material/Box';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import { useTheme } from '@mui/material/styles';
+import ToggleButton from '@mui/material/ToggleButton';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
@@ -20,8 +22,9 @@ import Searchbar from './common/searchbar';
 
 // ----------------------------------------------------------------------
 
-export default function Header() {
+export default function Header({ onSearch, onChangeDate, onChangeGranularity}) {
   const [query, setQuery] = useState('');
+  const [granularity, setGranularity] = useState('Month');
 
   const theme = useTheme();
 
@@ -35,7 +38,8 @@ export default function Header() {
           setQuery(event.target.value);
         }}
         onSearch={() => {
-          console.log(`Searched: ${query}`);
+          // console.log(`Searched: ${query}`);
+          onSearch(query);
         }}
       />
 
@@ -44,10 +48,27 @@ export default function Header() {
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <DatePicker
           onAccept={(date) => {
-            console.log(date);
+            // console.log(date);
+            onChangeDate(date);
           }}
         />
       </LocalizationProvider>
+
+      <Box sx={{ flexGrow: 0.05}} />
+
+      <ToggleButtonGroup
+        color="primary"
+        value={granularity}
+        exclusive
+        onChange={(event, newGranularity) => {
+          setGranularity(newGranularity);
+          onChangeGranularity(newGranularity);
+        }}
+        aria-label="Granularity"
+      >
+        <ToggleButton value="Day">Day</ToggleButton>
+        <ToggleButton value="Month">Month</ToggleButton>
+      </ToggleButtonGroup>
     </>
   );
 
@@ -81,6 +102,9 @@ export default function Header() {
   );
 }
 
-// Header.propTypes = {
-//   onOpenNav: PropTypes.func,
-// };
+Header.propTypes = {
+  // onOpenNav: PropTypes.func,
+  onSearch: PropTypes.func,
+  onChangeDate: PropTypes.func,
+  onChangeGranularity: PropTypes.func,
+};

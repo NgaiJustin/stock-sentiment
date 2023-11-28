@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 
-import { fNumber } from 'src/utils/format-number';
+import { fNumber, fShortenNumber} from 'src/utils/format-number';
 
 import Chart, { useChart } from 'src/components/chart';
 
@@ -35,6 +35,16 @@ export default function AppConversionRates({ title, subheader, chart, ...other }
     },
     xaxis: {
       categories: series.map((i) => i.label),
+      // add ticks for each million
+      tickAmount: 6,
+      tickPlacement: 'between',
+      tickBorderWidth: 1,
+      tickBorderDashed: true,
+      tickWidth: 1,
+      labels: {
+        formatter: (value) => fShortenNumber(value),
+      },
+
     },
     ...options,
   });

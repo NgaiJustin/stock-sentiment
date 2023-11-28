@@ -19,8 +19,50 @@ import AppConversionRates from '../app-conversion-rates';
 
 // ----------------------------------------------------------------------
 
-export default function AppView({data}) {
-  // console.log(data);
+export default function AppView({ data }) {
+  // console.log(data.Close - data.Open);
+  const firstOpen = data.length > 0 ? data[0].Open : 0;
+  const lastClose = data.length > 0 ? data[data.length - 1].Close : 0;
+  const change = lastClose - firstOpen;
+  const percentChange = (change / firstOpen) * 100;
+  const formattedPercentChange = `${percentChange > 0 ? '+' : '-'}${percentChange.toFixed(2)}%`;
+
+  // group by hour if granularity is day
+  const entriesGroup =
+    data.granularity === 'Day'
+      ? Array.from(
+          data
+            .filter((item) => item.Date.length > 10) // filter out items with no time
+            .map((item) => ({
+              ...item,
+              Date: item.Date.substring(0, 13), // group by hour
+            }))
+            .reduce(
+              (entryMap, e) =>
+                // group by hour
+                entryMap.set(e.Date, [...(entryMap.get(e.Date) || []), e]),
+              new Map()
+            )
+        ).map((item) => ({
+          Date: item[0],
+          Volume: item[1].reduce((acc, curr) => acc + curr.Volume, 0),
+        }))
+      : data;
+
+  const volumeSeries = entriesGroup
+    .map((item) => ({
+      label: item.Date.substring(0, data.granularity === 'Day' ? 13 : 10) || 'N/A',
+      value: item.Volume || 0,
+    }))
+    .filter((item) => item.label !== 'N/A')
+    .filter((item) => item.value !== 0).map((item) => ({
+      label: item.label + (data.granularity === 'Day' ? ":00" : ""),
+      value: item.value,
+    }));
+    
+
+  console.log(volumeSeries)
+
   return (
     <Container maxWidth="xl">
       <Typography variant="h4" sx={{ mb: 5 }}>
@@ -67,7 +109,7 @@ export default function AppView({data}) {
         <Grid xs={12} md={6} lg={8}>
           <AppWebsiteVisits
             title="Price Chart"
-            subheader="(+43%) than last year"
+            subheader={`(${formattedPercentChange}) from last closure`}
             chart={{
               labels: data.map((item) => item.Date),
               series: [
@@ -81,8 +123,11 @@ export default function AppView({data}) {
                   name: 'Price',
                   type: 'area',
                   fill: 'gradient',
+                  color: `${change > 0 ? '#2DCE89' : '#F5365C'}`,
                   // Round to 4 decimal places
-                  data: data.map((item) => Math.round((item.Low + item.High) / 2 * 10000) / 10000),
+                  data: data.map(
+                    (item) => Math.round(((item.Low + item.High) / 2) * 10000) / 10000
+                  ),
                 },
               ],
             }}
@@ -91,13 +136,37 @@ export default function AppView({data}) {
 
         <Grid xs={12} md={6} lg={4}>
           <AppCurrentVisits
-            title="Components"
+            title="Sentiment"
             chart={{
               series: [
-                { label: 'America', value: 4344 },
-                { label: 'Asia', value: 5435 },
-                { label: 'Europe', value: 1443 },
-                { label: 'Africa', value: 4443 },
+                {
+                  label: 'Positive',
+                  value: data.reduce(
+                    (acc, curr) => acc + curr.sent_labels.filter((x) => x === 'pos').length,
+                    0
+                  ),
+                },
+                {
+                  label: 'Negative',
+                  value: data.reduce(
+                    (acc, curr) => acc + curr.sent_labels.filter((x) => x === 'neg').length,
+                    0
+                  ),
+                },
+                {
+                  label: 'Neutral',
+                  value: data.reduce(
+                    (acc, curr) => acc + curr.sent_labels.filter((x) => x === 'neutral').length,
+                    0
+                  ),
+                },
+                {
+                  label: 'Risky',
+                  value: data.reduce(
+                    (acc, curr) => acc + curr.sent_labels.filter((x) => x === 'risky').length,
+                    0
+                  ),
+                },
               ],
             }}
           />
@@ -105,21 +174,10 @@ export default function AppView({data}) {
 
         <Grid xs={12} md={6} lg={8}>
           <AppConversionRates
-            title="XXX Rates"
+            title="Trade Volumes"
             subheader="(+43%) than last year"
             chart={{
-              series: [
-                { label: 'Italy', value: 400 },
-                { label: 'Japan', value: 430 },
-                { label: 'China', value: 448 },
-                { label: 'Canada', value: 470 },
-                { label: 'France', value: 540 },
-                { label: 'Germany', value: 580 },
-                { label: 'South Korea', value: 690 },
-                { label: 'Netherlands', value: 1100 },
-                { label: 'United States', value: 1200 },
-                { label: 'United Kingdom', value: 1380 },
-              ],
+              series: volumeSeries,
             }}
           />
         </Grid>
@@ -174,5 +232,5 @@ export default function AppView({data}) {
 }
 
 AppView.propTypes = {
-  data: PropTypes.object
+  data: PropTypes.object,
 };

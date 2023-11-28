@@ -34,35 +34,51 @@ export default function Router() {
   const onChangeGranularity = (value) => {
     setGranularity(value);
     getData(search, date, value);
-  }
+  };
 
   const getData = (currSearch, currDate, currGranularity) => {
     // based on 'date' and 'search' fetch data from backend
     console.log(`fetching data for: ${currDate} ${currSearch} ${currGranularity}`);
-    const currDateTime = new Date(currDate)
-    
+    const currDateTime = new Date(currDate);
+
     // filter all entries that match the currDateTime
     const newData = demoData.filter((item) => {
-      const itemDateTime = new Date(item.Date)
+      const itemDateTime = new Date(item.Date);
       if (currGranularity === 'Month') {
-        return itemDateTime.getFullYear() === currDateTime.getFullYear() &&
+        return (
+          itemDateTime.getFullYear() === currDateTime.getFullYear() &&
           itemDateTime.getMonth() === currDateTime.getMonth()
+        );
       }
-      return itemDateTime.getFullYear() === currDateTime.getFullYear() &&
+      return (
+        itemDateTime.getFullYear() === currDateTime.getFullYear() &&
         itemDateTime.getMonth() === currDateTime.getMonth() &&
         itemDateTime.getDate() === currDateTime.getDate()
+      );
+    });
+    
+    // add tag for granularity
+    newData.granularity = currGranularity;
+
+    // wrap sent_label in array
+    newData.forEach((item) => {
+      item.sent_labels = [item.sent_label];
     });
 
     // if granularity is 'Month' then take aggregate per day
     if (currGranularity === 'Month') {
-      const newDataPerDay = {}
+      const newDataPerDay = {};
       newData.forEach((item) => {
-        const itemDateTime = new Date(item.Date)
-        const itemDate = itemDateTime.getDate()
+        const itemDateTime = new Date(item.Date);
+        const itemDate = itemDateTime.getDate();
         if (itemDate in newDataPerDay) {
-          newDataPerDay[itemDate].Volume += item.Volume
-          newDataPerDay[itemDate].Low = Math.min(newDataPerDay[itemDate].Low, item.Low)
-          newDataPerDay[itemDate].High = Math.max(newDataPerDay[itemDate].High, item.High)
+          newDataPerDay[itemDate].Volume += item.Volume;
+          newDataPerDay[itemDate].Low = Math.min(newDataPerDay[itemDate].Low, item.Low);
+          newDataPerDay[itemDate].High = Math.max(newDataPerDay[itemDate].High, item.High);
+
+          // add sent_label to array
+          newDataPerDay[itemDate].sent_labels.push(item.sent_label);
+
           // {
           //   "stock": "AAPL",
           //   "Date": "2016-01-04 09:00:00",
@@ -72,13 +88,11 @@ export default function Router() {
           //   "Close": 98.7933,
           //   "Volume": 945459,
           //   "OpenInt": 0,
-          //   "cumulative_sentiment": 6.263,
-          //   "silly_pos": 0.0193548387,
-          //   "silly_neg": 0.0193548387,
-          //   "silly_risk": 0.0096774194,
-          //   "better_pos": 0.1,
-          //   "better_neg": 0.025,
-          //   "better_neutral": 0.875
+          //   "better_pos": 0.143,
+          //   "better_neg": 0.033,
+          //   "better_neutral": 0.824,
+          //   "sent_label": "pos",
+          //   "cumulative_sent": 66.9158213205
           // },
         } else {
           newDataPerDay[itemDate] = {
@@ -86,21 +100,25 @@ export default function Router() {
             Volume: item.Volume,
             Low: item.Low,
             High: item.High,
-          }
+            sent_labels: [],
+          };
         }
-      })
-      const newDataPerDayArray = Object.values(newDataPerDay)
-      setData(newDataPerDayArray)
-      return
+      });
+      const newDataPerDayArray = Object.values(newDataPerDay);
+      setData(newDataPerDayArray);
+      return;
     }
-    
     setData(newData);
   };
 
   const routes = useRoutes([
     {
       element: (
-        <DashboardLayout onSearch={onSearch} onChangeDate={onChangeDate} onChangeGranularity={onChangeGranularity}>
+        <DashboardLayout
+          onSearch={onSearch}
+          onChangeDate={onChangeDate}
+          onChangeGranularity={onChangeGranularity}
+        >
           <IndexPage data={data} />
         </DashboardLayout>
       ),
